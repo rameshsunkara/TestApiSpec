@@ -1,0 +1,104 @@
+openapi: 3.1.0
+info:
+  title: API Specification Common
+  description: Common API specifications for the platform.
+  version: 1.0.0
+
+components:
+  securitySchemes:
+    Bearer:
+      description: Personal access token compliant with RFC8725 issued by platform.
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorDetail:
+      type: object
+      required:
+          - type
+          - source
+          - metadata
+      properties:
+        type:
+          type: string
+          description: The type of error details.
+          maxLength: 250
+        source:
+          type: string
+          description: The source of the error details.
+          maxLength: 100
+        metadata:
+          type: object
+          description: Additional metadata about the error.
+
+    ApiError:
+      type: object
+      required:
+        - errorCode
+        - message
+        - debugId
+        - httpStatusCode
+      properties:
+        errorCode:
+          type: string
+          description: A unique machine-friendly, but human-readable identifier for the error
+          maxLength: 100
+        message:
+          type: string
+          description: User-friendly error message
+          maxLength: 250
+        debugId:
+          type: string
+          maxLength: 36
+          format: uuid
+          description: Unique identifier for the instance of this error
+        httpStatusCode:
+          description: HTTP equivalent status code
+          type: integer
+          format: int32
+          minimum: 400
+          maximum: 599
+        errorDetails:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    Unauthorized:
+      description: Unauthorized - Invalid JWT token in Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      headers:
+        x-envoy-rate-limited:
+          description: Rate limit exceeded
+          schema:
+            type: string
+            format: boolean
+      content:
+        application/json: { }
+    UnexpectedError:
+      description: Unexpected Server Error. Please re-try and contact HPE support if the error is not resolved.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    ResourceNotFound:
+      description: Resource Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+
+
