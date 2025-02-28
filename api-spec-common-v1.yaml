@@ -62,7 +62,7 @@ components:
           type: array
           maxItems: 100
           items:
-            $ref: "#/components/schemas/ErrorDetail"
+            $ref: "https://raw.githubusercontent.com/rameshsunkara/TestApiSpec/main/api-spec-common-v1.yaml#/components/schemas/ErrorDetail"
 
 
   responses:
@@ -71,7 +71,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ApiError"
+            $ref: "https://raw.githubusercontent.com/rameshsunkara/TestApiSpec/main/api-spec-common-v1.yaml#/components/schemas/ApiError"
     Unauthorized:
       description: Unauthorized - Invalid JWT token in Request
       content:
